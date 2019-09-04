@@ -41,37 +41,6 @@
 <cloud-env>: Value is `ibmcloud`
 ```
 
-## private-k8s cloud
-### Install steps for private-k8s cloud:
-- Clone this repo
-- `cd security-advisor-k8s-bench-integration/scripts/private`
-- Inorder to point to security advisor london endpoint do following changes:
-  uncomment line#14 and comment line#13 in /config/helm/kubebench-adapter/values.yaml 
-- `./sa_kubebench_install.sh <account-id> <apikey> <target-clustername> "<complete path of kubeconfig of target cluster>"`
-- for example: 
-```
-./sa_kubebench_install.sh 4c2b312adaa9ffdcdc53071c4fb3d0d4 apikey mycluster "/Users/sunilsingh/.bluemix/plugins/container-service/clusters/mycluster"
-<account-id>: Account id on which the card needs to be generated
-<apikey>: api-key of the above account-id.
-<complete path of kubeconfig of target cluster>: Run `ibmcloud cs cluster-config <clustername>` to get kube-config
-<target-clustername>: The target private k8s cluster on which kube-bench needs to be configured 
-```
-
-### Cleanup setup for private-k8s cloud:
-- Run below automated script to cleanup all in once.
-- Clone this repo
-- `cd security-advisor-k8s-bench-integration/scripts/private`
-`./sa_kubebench_cleanup.sh <account id> <api key> "full path to directory of kube configs>" <cloud-env>`
-- For example: 
-```
- ./sa_kubebench_cleanup.sh  accountid apikey "/Users/sunilsingh/.bluemix/plugins/container-service/clusters/mycluster ibmcloud-private
-<account id>: Account id on which the card needs to be generated
-<apikey>: api-key of the above account-id.
-<target-clustername>: The target private k8s cluster on which kube-bench needs to be configured 
-<complete path of kubeconfig of target cluster>: Run `ibmcloud cs cluster-config <clustername>` to get kube-config
-<cloud-env>: Value is `ibmcloud-private`
-```
-
 ## Redhat Openshift
 ### Install steps for source is public-k8s cloud and target is redhat-openshift cloud:
 - Clone this repo
