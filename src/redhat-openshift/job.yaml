@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    job-name: kube-bench-redhat
+  name: kube-bench-redhat
+  namespace: default
+spec:
+  selector:
+  template:
+    metadata:
+      labels:
+        job-name: kube-bench-redhat
+    spec:
+      containers:
+      - command:
+        - kube-bench
+        - node
+        - --version
+        - ocp-3.11
+        image: saksaini/kubebench:latest
+        imagePullPolicy: IfNotPresent
+        name: kube-bench
+        volumeMounts:
+        - mountPath: /var/lib/kubelet
+          name: var-lib-kubelet
+        - mountPath: /etc/systemd
+          name: etc-systemd
+        - mountPath: /etc/kubernetes
+          name: etc-kubernetes
+        - mountPath: /usr/bin
+          name: usr-bin
+      restartPolicy: Never
+      volumes:
+      - hostPath:
+          path: /var/lib/kubelet
+          type: ""
+        name: var-lib-kubelet
+      - hostPath:
+          path: /etc/systemd
+          type: ""
+        name: etc-systemd
+      - hostPath:
+          path: /etc/kubernetes
+          type: ""
+        name: etc-kubernetes
+      - hostPath:
+          path: /usr/bin
+          type: ""
+        name: usr-bin

@@ -1,0 +1,89 @@
+
+apiVersion: batch/v2alpha1
+kind: CronJob
+metadata:
+  name: {{ .Values.global.name }}
+  namespace: {{ .Values.global.clusterNamespace }}
+spec:
+  schedule: "*/15 * * * *"
+  concurrencyPolicy: Replace
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    metadata:
+      name: {{ .Values.global.name }}
+      namespace: {{ .Values.global.clusterNamespace }}
+    spec:
+      template:
+        metadata:
+           namespace: {{ .Values.global.clusterNamespace }}
+           labels:
+              job: {{ .Values.global.name }}
+        spec:
+           restartPolicy: OnFailure
+           imagePullSecrets:
+            - name: {{ .Values.global.imagePullSecrets }}
+           containers:
+           - name: {{ .Values.global.name }}
+             image: us.icr.io/{{ .Values.global.registryNamespace }}/{{ .Values.global.imageName }}:{{ .Values.global.tag | default "dummy" }}
+             command:
+               - "/bin/sh"
+               - "-c"
+               - "nohup /kubebench-sa-adapter/$CLOUD_ENV/updateKubeBenchCard_entryPt.sh $ACCOUNT_ID $API_KEY $CLUSTER_NAME $KUBE_CONFIG_NAME"
+             volumeMounts:
+             - name: kubectl-binary
+               mountPath: /usr/bin/kubectl
+               readOnly: true
+             - name: kubectl-config
+               mountPath: /etc/kubernetes/config
+               readOnly: true
+             - name: kubebench-secret-volume
+               readOnly: true
+               mountPath: "/etc/kubeconfig"                
+## Define Env variables
+             env:
+             - name: ACCOUNT_ID
+               valueFrom:
+                 secretKeyRef:
+                   name: kubebench-public-credentials
+                   key: account_id
+             - name: API_KEY
+               valueFrom:
+                 secretKeyRef:
+                   name: kubebench-public-credentials
+                   key: api_key    
+             - name: CLUSTER_NAME
+               valueFrom:
+                 secretKeyRef:
+                   name: kubebench-public-credentials
+                   key: cluster_name 
+             - name: KUBE_CONFIG_NAME
+               valueFrom:
+                 secretKeyRef:
+                   name: kubebench-public-credentials
+                   key: kube_config_name    
+             - name: SA_ENDPOINT
+               valueFrom:
+                 configMapKeyRef:
+                   name: kubebench-sa-adapter-public-configuration
+                   key: saEndpoint
+             - name: TOKEN_URL
+               valueFrom:
+                 configMapKeyRef:
+                   name: kubebench-sa-adapter-public-configuration
+                   key: tokenUrl
+             - name: CLOUD_ENV
+               valueFrom:
+                 configMapKeyRef:
+                   name: kubebench-sa-adapter-public-configuration
+                   key: cloudEnv
+           volumes:
+             - name: kubectl-binary
+               hostPath:
+                  path: /usr/bin/kubectl
+             - name: kubectl-config
+               hostPath:
+                 path: /etc/kubernetes/config
+             - name: kubebench-secret-volume
+               secret:
+                 secretName: kubebench-public-secret                 
