@@ -59,7 +59,7 @@
 
 ### Cleanup setup for private-k8s cloud:
 - Run below automated script to cleanup all in once.
-- Clone the repo: `git clone git@github.ibm.com:sec-advisor-code-samples/security-advisor-k8s-bench-integration.git`
+- Clone this repo
 - `cd security-advisor-k8s-bench-integration/scripts/private`
 `./sa_kubebench_cleanup.sh <account id> <api key> "full path to directory of kube configs>" <cloud-env>`
 - For example: 
