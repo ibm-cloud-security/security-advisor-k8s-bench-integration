@@ -8,6 +8,7 @@ import datetime
 import string
 import random
 import os
+<<<<<<< HEAD
 
 logger = logging.getLogger("iam")
 
@@ -17,41 +18,80 @@ vulnerablity_notes_defenition = {
             "kind": "FINDING",
             "short_description": "Kube bench ibmcloud warnings",
             "long_description": "Kube bench ibmcloud warnings",
+=======
+from ibm_cloud_sdk_core.authenticators import BearerTokenAuthenticator, IAMAuthenticator
+from ibm_security_advisor_findings_api_sdk import FindingsApiV1
+
+logger = logging.getLogger("l1_adaptor")
+logger.setLevel(logging.INFO)
+
+vulnerablity_notes_definition = {
+    "notes": [
+        {
+            "kind": "FINDING",
+            "short_description": "kube-bench IBM Cloud Warnings",
+            "long_description": "kube-bench IBM Cloud Warnings",
+>>>>>>> c040036... sdk integration complete
             "provider_id": "kubeBenchIBMCloudWarnings",
             "id": "kubebenchibmcloud-warning",
             "reported_by": {
                 "id": "kubebenchibmcloud-warning",
+<<<<<<< HEAD
                 "title": "Kubebench ibmcloud control"
+=======
+                "title": "kube-bench IBM Cloud Control"
+>>>>>>> c040036... sdk integration complete
             },
             "finding": {
                 "severity": "LOW",
                 "next_steps": [{
+<<<<<<< HEAD
                     "title": "KUBE BENCH IBMCLOUD WARNINGS"
+=======
+                    "title": "kube-bench IBM Cloud Warnings"
+>>>>>>> c040036... sdk integration complete
                 }]
             }
         },
         {
             "kind": "FINDING",
+<<<<<<< HEAD
             "short_description": "Kube bench ibmcloud failures",
             "long_description": "Kube Bench IBMCloud failures",
+=======
+            "short_description": "kube-bench IBM Cloud Failures",
+            "long_description": "kube-bench IBM Cloud Failures",
+>>>>>>> c040036... sdk integration complete
             "provider_id": "kubeBenchIBMCloudFailures",
             "id": "kubebenchibmcloud-failure",
             "reported_by": {
                 "id": "kubebenchibmcloud-failure",
+<<<<<<< HEAD
                 "title": "Kubebench ibmcloud control"
+=======
+                "title": "kube-bench IBM Cloud Control"
+>>>>>>> c040036... sdk integration complete
             },
             "finding": {
                 "severity": "HIGH",
                 "next_steps": [{
+<<<<<<< HEAD
                     "title": "KUBE BENCH IBMCLOUD FAILURE "
                 }]
             }
         },
 
+=======
+                    "title": "kube-bench IBM Cloud Failures"
+                }]
+            }
+        },
+>>>>>>> c040036... sdk integration complete
         {
             "kind": "CARD",
             "provider_id": "kubeBenchIBMCloud",
             "id": "kubebenchibmcloud-card",
+<<<<<<< HEAD
             "short_description": "Kubebench ibmcloud vulnerabilities",
             "long_description": "kubebench ibmcloud reported vulnerabilities",
             "reported_by": {
@@ -61,12 +101,24 @@ vulnerablity_notes_defenition = {
             "card": {
                 "section": "Container Config Benchmark",
                 "title": "Kube-Bench",
+=======
+            "short_description": "kube-bench IBM Cloud Vulnerabilities",
+            "long_description": "kube-bench IBM Cloud Vulnerabilities",
+            "reported_by": {
+                "id": "kubebenchibmcloud-card",
+                "title": "kube-bench IBM Cloud Vulnerabilities"
+            },
+            "card": {
+                "section": "Container Config Benchmark",
+                "title": "kube-bench",
+>>>>>>> c040036... sdk integration complete
                 "subtitle": "IBM Cloud",
                 "context" : {},
                 "finding_note_names": [
                     "providers/kubeBenchIBMCloudWarnings/notes/kubebenchibmcloud-warning",
                     "providers/kubeBenchIBMCloudFailures/notes/kubebenchibmcloud-failure"
                 ],
+<<<<<<< HEAD
                 "elements": [{
                     "kind": "NUMERIC",
                     "text": "Warnings",
@@ -81,6 +133,23 @@ vulnerablity_notes_defenition = {
                     {
                         "kind": "NUMERIC",
                         "text": "Failiures",
+=======
+                "elements": [
+                    {
+                        "kind": "NUMERIC",
+                        "text": "Warnings",
+                        "default_time_range": "4d",
+                        "value_type": {
+                            "kind": "FINDING_COUNT",
+                            "finding_note_names": [
+                                "providers/kubeBenchIBMCloudWarnings/notes/kubebenchibmcloud-warning"
+                            ]
+                        }
+                    },
+                    {
+                        "kind": "NUMERIC",
+                        "text": "Failures",
+>>>>>>> c040036... sdk integration complete
                         "default_time_range": "4d",
                         "value_type": {
                             "kind": "FINDING_COUNT",
@@ -98,6 +167,7 @@ vulnerablity_notes_defenition = {
 
 def obtain_iam_token(api_key):
     if not api_key:
+<<<<<<< HEAD
         raise Exception("obtain_uaa_token: missing api key")
 
     token_url = os.environ['TOKEN_URL']
@@ -140,10 +210,47 @@ def create_note(account_id, token, endpoint):
             logger.exception("An unexpected error was encountered while creating note" + str(err))
         if response.status_code == 200:
             logger.info("Note created : %s" % note['id'])
+=======
+        raise Exception("obtain_iam_token: missing api key")
+    try:
+        authenticator = IAMAuthenticator(api_key, url=os.environ['TOKEN_URL'])
+        token = authenticator.token_manager.get_token()
+    except requests.exceptions.HTTPError as err:
+        logger.exception("an unexpected error was encountered while obtaining IAM token: "+str(err))
+        sys.exit(1)
+    if token:
+        return token
+
+def create_note(account_id, token, endpoint):
+    try:
+        findingsAPI = FindingsApiV1(
+            authenticator=BearerTokenAuthenticator(token)
+        )
+        findingsAPI.set_service_url(endpoint)
+        for note in vulnerablity_notes_definition["notes"]:
+            response = findingsAPI.create_note(
+                account_id=account_id,
+                provider_id=note['provider_id'],
+                short_description=note['short_description'],
+                long_description=note['long_description'],
+                kind=note['kind'],
+                id=note['id'],
+                reported_by=note['reported_by'],
+                finding=note['finding'] if 'finding' in note else None,
+                card=note['card'] if 'card' in note else None
+            )
+            if response.get_status_code() == 200:
+                logger.info("created note: %s" % note['id'])
+            else:
+                logger.error("unable to create note: %s" % note['id'])
+    except:
+        logger.exception("an unexpected error was encountered while creating note")
+>>>>>>> c040036... sdk integration complete
 
 
 def get_all_kubebenchnotes(account_id, token, endpoint):
     notes = []
+<<<<<<< HEAD
     url = endpoint + "/" + account_id + "/providers/kubeBenchIBMCloud/notes"
     notes.extend(get_notes(account_id, token, endpoint, url))
     url = endpoint + "/" + account_id + "/providers/kubeBenchIBMCloudWarnings/notes"
@@ -195,10 +302,61 @@ def delete_notes(account_id, token, endpoint, notes):
         except:
             logger.exception("An unexpected error was encountered while deleting the note" + str(err))
         time.sleep(1)
+=======
+    providers = ["kubeBenchIBMCloud", "kubeBenchIBMCloudWarnings", "kubeBenchIBMCloudFailures"]
+    notes.extend(get_notes(account_id, token, endpoint, providers))
+    return notes
+
+
+def get_notes(account_id, token, endpoint, providers):
+    notes = []
+    try:
+        findingsAPI = FindingsApiV1(
+            authenticator=BearerTokenAuthenticator(token)
+        )
+        findingsAPI.set_service_url(endpoint)
+        for provider in providers:
+            response = findingsAPI.list_notes(
+                account_id=account_id, 
+                provider_id=provider
+            )
+            if response.get_status_code() == 200:
+                logger.info("got notes by provider: %s" % provider)
+                for note in response.get_result()['notes']:
+                    notes.append(note)
+            else:
+                logger.error("unable to get notes by provider: %s" % provider)
+        return notes
+    except requests.exceptions.HTTPError as err:
+        logger.exception("an unexpected error was encountered while getting the note: "+str(err))
+        return False
+
+
+def delete_notes(account_id, token, endpoint, notes):
+    try:
+        findingsAPI = FindingsApiV1(
+            authenticator=BearerTokenAuthenticator(token)
+        )
+        findingsAPI.set_service_url(endpoint)
+        for note in notes:
+            response = findingsAPI.delete_note(
+                account_id=account_id, 
+                provider_id=note['provider_id'], 
+                note_id=note['id']
+            )
+            if response.get_status_code() == 200:
+                logger.info("deleted note: %s" % note['id'])
+            else:
+                logger.error("unable to delete note: %s" % note['id'])
+    except:
+        logger.exception("an unexpected error was encountered while deleting the note: "+str(err))
+    time.sleep(1)
+>>>>>>> c040036... sdk integration complete
 
 
 def get_all_kubebenchoccurrences(account_id, token, endpoint):
     occurrences = []
+<<<<<<< HEAD
     url = endpoint + "/" + account_id + "/providers/kubeBenchIBMCloud/occurrences"
     occurrences.extend(get_occurrences(account_id, token, endpoint, url))
     url = endpoint + "/" + account_id + "/providers/kubeBenchIBMCloudWarnings/occurrences"
@@ -247,6 +405,56 @@ def delete_occurrences(account_id, token, endpoint, occurrences):
         except requests.exceptions.HTTPError as err:
             logger.exception("An unexpected error was encountered while deleting the occurrence" + str(err))
         time.sleep(1)
+=======
+    providers = ["kubeBenchIBMCloud", "kubeBenchIBMCloudWarnings", "kubeBenchIBMCloudFailures"]
+    occurrences.extend(get_occurrences(account_id, token, endpoint, providers))
+    return occurrences
+
+
+def get_occurrences(account_id, token, endpoint, providers):
+    occurrences = []
+    try:
+        findingsAPI = FindingsApiV1(
+            authenticator=BearerTokenAuthenticator(token)
+        )
+        findingsAPI.set_service_url(endpoint)
+        for provider_id in providers:
+            response = findingsAPI.list_occurrences(
+                account_id=account_id, 
+                provider_id=provider_id
+            )
+            if response.get_status_code() == 200:
+                logger.info("got occurrences by provider: %s" % provider_id)
+                for occurrence in response.get_result()['occurrences']:
+                    occurrences.append(occurrence)
+            else:
+                logger.error("unable to get occurrences by provider: %s" % provider_id)
+        return occurrences
+    except requests.exceptions.HTTPError as err:
+        logger.exception("an unexpected error was encountered while getting the occurrences: "+str(err))
+        return False
+
+
+def delete_occurrences(account_id, token, endpoint, occurrences):
+    try:
+        findingsAPI = FindingsApiV1(
+            authenticator=BearerTokenAuthenticator(token)
+        )
+        findingsAPI.set_service_url(endpoint)
+        for occurrence in occurrences:
+            response = findingsAPI.delete_occurrence(
+                account_id=account_id, 
+                provider_id=occurrence['provider_id'], 
+                occurrence_id=occurrence['id']
+            )
+            if response.get_status_code() == 200:
+                logger.info("deleted occurrence: %s" % occurrence['id'])
+            else:
+                logger.error("unable to delete occurrence: %s" % occurrence['id'])
+    except requests.exceptions.HTTPError as err:
+        logger.exception("an unexpected error was encountered while deleting the occurrence: "+str(err))
+    time.sleep(1)
+>>>>>>> c040036... sdk integration complete
 
 
 def id_generator(size=6, chars=string.digits):
@@ -255,6 +463,7 @@ def id_generator(size=6, chars=string.digits):
 
 # This method needs to be defined for any partner application that needs to adapt
 def createOccurences(account_id, token, endpoint, occurrencesJson):
+<<<<<<< HEAD
     headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -273,6 +482,31 @@ def createOccurences(account_id, token, endpoint, occurrencesJson):
             logger.exception("An unexpected error was encountered while creating occurrence" + str(err))
         if response.status_code == 200:
             logging.info("Created occurrence")
+=======
+    try:
+        findingsAPI = FindingsApiV1(
+            authenticator=BearerTokenAuthenticator(token)
+        )
+        findingsAPI.set_service_url(endpoint)
+        for occurrence in occurrencesJson:
+            response = findingsAPI.create_occurrence(
+                account_id=account_id,
+                provider_id=occurrence['provider_id'],
+                note_name=occurrence['note_name'],
+                kind=occurrence['kind'],
+                remediation=occurrence['remediation'],
+                context=occurrence['context'],
+                id=occurrence['id'],
+                finding=occurrence['finding'] if 'finding' in occurrence else None,
+                kpi=occurrence['kpi'] if 'kpi' in occurrence else None
+            )
+            if response.status_code == 200:
+                logger.info("created occurrence: %s" % occurrence['id'])
+            else:
+                logger.error("unable to create occurrence: %s" % occurrence['id'])
+    except requests.exceptions.HTTPError as err:
+            logger.exception("an unexpected error was encountered while creating occurrence: "+str(err))
+>>>>>>> c040036... sdk integration complete
 		    
 
 def executePointInTimeVulnerabilityOccurenceAdapter(apikey, account_id, endpoint, vulnerabilitiesReportedByPartner):
@@ -280,12 +514,20 @@ def executePointInTimeVulnerabilityOccurenceAdapter(apikey, account_id, endpoint
     try:
         create_note(account_id, token, endpoint)
     except:
+<<<<<<< HEAD
         print("ignoring metadata duplicateerrors")
+=======
+        print("ignoring metadata duplicate errors")
+>>>>>>> c040036... sdk integration complete
     try:
         vulnerabilityOccurrences = get_all_kubebenchoccurrences(account_id, token, endpoint)
         delete_occurrences(account_id, token, endpoint, vulnerabilityOccurrences)
     except:
+<<<<<<< HEAD
         print("ignoring metadata duplicateerrors")
+=======
+        print("ignoring metadata duplicate errors")
+>>>>>>> c040036... sdk integration complete
 
     createOccurences(account_id, token, endpoint, vulnerabilitiesReportedByPartner["insights"])
     occurrences = get_all_kubebenchoccurrences(account_id, token, endpoint)
