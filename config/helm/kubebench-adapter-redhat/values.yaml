@@ -10,8 +10,13 @@ global:
   clusterNamespace: default
   cloudEnv: redhat-openshift
 
+<<<<<<< HEAD
   saEndpoint: "https://us-south.secadvisor.cloud.ibm.com/findings/v1"
   # saEndpoint: "https://eu-gb.secadvisor.cloud.ibm.com/findings/v1"
+=======
+  saEndpoint: "https://us-south.secadvisor.cloud.ibm.com/findings"
+  # saEndpoint: "https://eu-gb.secadvisor.cloud.ibm.com/findings"
+>>>>>>> c040036... sdk integration complete
 
   tokenUrl: "https://iam.cloud.ibm.com/identity/token"
   # token_url: "https://iam.test.cloud.ibm.com/identity/token"
