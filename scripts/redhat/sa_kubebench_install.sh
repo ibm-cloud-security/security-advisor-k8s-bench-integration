@@ -6,9 +6,6 @@
 # * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 #******************************************************************************
 
-<<<<<<< HEAD
-set +x
-=======
 # To check if helm is installed on system or not.
 command -v helm >/dev/null 2>&1 || { echo >&2 "helm is required. Aborting."; exit 1; }
 command -v kubectl >/dev/null 2>&1 || { echo >&2 "kubectl is required. Aborting."; exit 1; }
@@ -16,7 +13,6 @@ command -v kubectl >/dev/null 2>&1 || { echo >&2 "kubectl is required. Aborting.
 # To check what version of helm is installed on system.
 helmVer=`helm version --template {{.Version}}`
 helmVerMajor="$(cut -d'.' -f 1 <<< ${helmVer:1})"
->>>>>>> c040036... sdk integration complete
 
 if [ "$#" -ne 5 ] && [ "$#" -ne 4 ]; then
     echo "Required arguments missing!"
@@ -36,26 +32,13 @@ if [ "$source_server" == "redhat" ]; then
     ibmcloud login -a test.cloud.ibm.com -r us-south --apikey $oc_login_apikey
     ibmcloud oc cluster-get --cluster $cluster_name
 
-<<<<<<< HEAD
-    chmod +x generate_kubebench_secrets.sh
-    ./generate_kubebench_secrets.sh $account_id $api_key $cluster_name $oc_login_apikey default
-=======
     chmod +x ./scripts/redhat/generate_kubebench_secrets.sh
     ./scripts/redhat/generate_kubebench_secrets.sh $account_id $api_key $cluster_name $oc_login_apikey default
->>>>>>> c040036... sdk integration complete
     masterURL=$(ibmcloud oc cluster-get --cluster $cluster_name|grep "Master URL" |awk '{ print $3 }')
     echo "masterURL is $masterURL"
     oc login -u apikey -p $oc_login_apikey --server=$masterURL
 
 else
-<<<<<<< HEAD
-    chmod +x generate_kubebench_secrets.sh
-    ./generate_kubebench_secrets.sh $account_id $api_key $cluster_name $oc_login_apikey default
-fi
-
-cd ../../config/helm/kubebench-adapter-redhat
-helm install --name kubebench-sa-adapter-redhat .
-=======
     chmod +x ./scripts/redhat/generate_kubebench_secrets.sh
     ./scripts/redhat/generate_kubebench_secrets.sh $account_id $api_key $cluster_name $oc_login_apikey default
 fi
@@ -67,4 +50,3 @@ if [ $helmVerMajor -gt 2 ]; then
 else
     helm install --name kubebench-sa-adapter-redhat .
 fi
->>>>>>> c040036... sdk integration complete

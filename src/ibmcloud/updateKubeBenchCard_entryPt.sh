@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-
-echo "CLOUD_ENV is $CLOUD_ENV"
-while true; do
-    /kubebench-sa-adapter/$CLOUD_ENV/update_kubebenchcard.sh $1 $2 $3 $4 &
-=======
 #*******************************************************************************
 # * Licensed Materials - Property of IBM
 # * IBM Bluemix Container Service, 5737-D43
@@ -15,6 +9,5 @@ while true; do
 echo "CLOUD_ENV is $CLOUD_ENV"
 while true; do
   /kubebench-sa-adapter/$CLOUD_ENV/update_kubebenchcard.sh $1 $2 $3 $4 &
->>>>>>> c040036... sdk integration complete
   sleep 3600
 done

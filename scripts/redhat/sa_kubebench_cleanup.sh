@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-set +x
-=======
 #*******************************************************************************
 # * Licensed Materials - Property of IBM
 # * IBM Bluemix Container Service, 5737-D43
@@ -18,7 +14,6 @@ command -v kubectl >/dev/null 2>&1 || { echo >&2 "kubectl is required. Aborting.
 helmVer=`helm version --template {{.Version}}`
 helmVerMajor="$(cut -d'.' -f 1 <<< ${helmVer:1})"
 
->>>>>>> c040036... sdk integration complete
 if [ "$#" -ne 6 ] || [ "$#" -ne 5 ]; then
     echo "Required arguments missing!"
     echo "Usage : ./$(basename "$0") <account id> <api key> <cluster name> <oc login api-key> <sa-endpoint>"
@@ -34,11 +29,7 @@ oc_login_apikey=$4
 sa_endpoint=$5
 source_server=$6
 
-<<<<<<< HEAD
-python ../../src/redhat-openshift/kubeBenchCleanup.py $account_id $api_key $sa_endpoint
-=======
 python3 src/redhat-openshift/kubeBenchCleanup.py $account_id $api_key $sa_endpoint
->>>>>>> c040036... sdk integration complete
 
 if [ "$source_server" == "redhat" ]; then
     ibmcloud login -a test.cloud.ibm.com -r us-south --apikey $oc_login_apikey
@@ -48,30 +39,22 @@ if [ "$source_server" == "redhat" ]; then
     oc login -u apikey -p $oc_login_apikey --server=$masterURL
 
     kubectl delete secret kubebench-redhat-credentials
-<<<<<<< HEAD
-    helm del --purge kubebench-sa-adapter-redhat
-=======
     if [ $helmVerMajor -gt 2 ]; then
         helm uninstall kubebench-sa-adapter-redhat
     else
         helm del --purge kubebench-sa-adapter-redhat .
     fi
->>>>>>> c040036... sdk integration complete
     podname=$(kubectl get job |grep kubebench-sa-adapter-redhat|awk '{ print $1 }')
     kubectl delete job $podname
     kubectl delete job kube-bench-redhat
     
 else
     kubectl delete secret kubebench-redhat-credentials
-<<<<<<< HEAD
-    helm del --purge kubebench-sa-adapter-redhat
-=======
     if [ $helmVerMajor -gt 2 ]; then
         helm uninstall kubebench-sa-adapter-redhat
     else
         helm del --purge kubebench-sa-adapter-redhat .
     fi
->>>>>>> c040036... sdk integration complete
     podname=$(kubectl get job |grep kubebench-sa-adapter-redhat|awk '{ print $1 }')
     kubectl delete job $podname
 

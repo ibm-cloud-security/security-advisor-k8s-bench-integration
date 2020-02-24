@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-set -x
-=======
 #*******************************************************************************
 # * Licensed Materials - Property of IBM
 # * IBM Bluemix Container Service, 5737-D43
@@ -10,15 +6,10 @@ set -x
 # * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 #******************************************************************************
 
->>>>>>> c040036... sdk integration complete
 accountid=$1
 apikey=$2
 clustername=$3
 oc_login_apikey=$4
-<<<<<<< HEAD
-echo "CLOUD_ENV is $CLOUD_ENV"
-=======
->>>>>>> c040036... sdk integration complete
 
 git clone https://github.com/aquasecurity/kube-bench.git
 cd kube-bench/
@@ -40,16 +31,8 @@ oc apply -f job.yaml
 sleep 20
 echo "starting to prepare kubebench analysis report"
 oc logs -f "$(oc get pods |grep kube-bench-redhat | awk '{ print $1 }')" >> ../vul.txt
-<<<<<<< HEAD
-echo "analysis report prepared"
-echo "Uploading report to SA"
-
-cd ../kubebench-sa-adapter/$CLOUD_ENV
-python kubeBenchAdaptor.py $accountid $apikey $clustername $SA_ENDPOINT
-=======
 echo "analysis report prepared!"
 echo "uploading report to SA..."
 
 cd ../kubebench-sa-adapter/$CLOUD_ENV
 python3 kubeBenchAdaptor.py $accountid $apikey $clustername $SA_ENDPOINT
->>>>>>> c040036... sdk integration complete

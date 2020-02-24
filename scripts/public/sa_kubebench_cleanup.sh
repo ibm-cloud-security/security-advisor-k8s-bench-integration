@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-
-set +x
-if [ "$#" -ne 5 ]; then
-    echo "Required arguments missing!"
-=======
 #*******************************************************************************
 # * Licensed Materials - Property of IBM
 # * IBM Bluemix Container Service, 5737-D43
@@ -27,36 +21,17 @@ if [ "$#" -ne 5 ]; then
     else
         echo "Wrong usage!"
     fi
->>>>>>> c040036... sdk integration complete
     echo "Usage : ./$(basename "$0") <account id> <api key> <full path to directory of kube configs> <cloud-env> <sa-endpoint>"
     exit 1
 fi
 
-<<<<<<< HEAD
-=======
 # Arguments assignment
->>>>>>> c040036... sdk integration complete
 account_id=$1
 api_key=$2
 kube_config_dir=$3
 sa_endpoint=$4
 cloud_env=$5
 
-<<<<<<< HEAD
-kubeconfig_name=$(ls $kube_config_dir |grep yml)
-
-python src/$cloud_env/kubeBenchCleanup.py $account_id $api_key $sa_endpoint
-
-kubectl delete secret kubebench-public-secret
-kubectl delete secret kubebench-public-credentials
-helm del --purge kubebench-sa-adapter-public
-podname=$(kubectl get job |grep kubebench-sa-adapter|awk '{ print $1 }')
-kubectl delete job $podname
-
-# Delete kube-bench Job running on target cluster: 
-export KUBECONFIG=$kube_config_dir/$kubeconfig_name
-kubectl delete job kube-bench
-=======
 # Remove notes and occurrences emitted by kube-bench
 python3 src/$cloud_env/kubeBenchCleanup.py $account_id $api_key $sa_endpoint
 
@@ -76,4 +51,3 @@ if [ $helmVerMajor -gt 2 ]; then
 else
     helm del --purge kubebench-sa-adapter-public .
 fi
->>>>>>> c040036... sdk integration complete

@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-set +x
-=======
 #*******************************************************************************
 # * Licensed Materials - Property of IBM
 # * IBM Bluemix Container Service, 5737-D43
@@ -9,7 +6,6 @@ set +x
 # * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 #******************************************************************************
 
->>>>>>> c040036... sdk integration complete
 if [ "$#" -ne 5 ]; then
     echo "Required arguments missing!"
     echo "Usage : ./$(basename "$0") <account_id> <api_key> <cluster_name> <kube config name> <namespace>"

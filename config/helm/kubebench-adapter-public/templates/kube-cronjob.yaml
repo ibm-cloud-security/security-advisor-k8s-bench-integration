@@ -25,11 +25,7 @@ spec:
             - name: {{ .Values.global.imagePullSecrets }}
            containers:
            - name: {{ .Values.global.name }}
-<<<<<<< HEAD
-             image: us.icr.io/{{ .Values.global.registryNamespace }}/{{ .Values.global.imageName }}:{{ .Values.global.tag | default "dummy" }}
-=======
              image: {{ .Values.global.registryNamespace }}/{{ .Values.global.imageName }}:{{ .Values.global.tag | default "dummy" }}
->>>>>>> c040036... sdk integration complete
              command:
                - "/bin/sh"
                - "-c"
