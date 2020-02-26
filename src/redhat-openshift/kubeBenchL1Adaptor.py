@@ -62,9 +62,12 @@ vulnerablity_notes_definition = {
             },
             "card": {
                 "section": "Container Config Benchmark",
+
+                # THIS NEEDS TO BE CHANGED
                 "title": "kube-bench",
+                # THIS NEEDS TO BE CHANGED
+                
                 "subtitle": "RedHat OpenShift",
-                "context" : {},
                 "finding_note_names": [
                     "providers/kubeBenchRedhatOpenshiftWarnings/notes/kubebenchredhat-openshift-warning",
                     "providers/kubeBenchRedhatOpenshiftFailures/notes/kubebenchredhat-openshift-failure"

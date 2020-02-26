@@ -62,9 +62,12 @@ vulnerablity_notes_definition = {
             },
             "card": {
                 "section": "Container Config Benchmark",
+
+                # THIS NEEDS TO BE CHANGED
                 "title": "kube-bench",
+                # THIS NEEDS TO BE CHANGED
+                
                 "subtitle": "IBM Cloud",
-                "context" : {},
                 "finding_note_names": [
                     "providers/kubeBenchIBMCloudWarnings/notes/kubebenchibmcloud-warning",
                     "providers/kubeBenchIBMCloudFailures/notes/kubebenchibmcloud-failure"
