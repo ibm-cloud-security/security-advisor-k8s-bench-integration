@@ -147,6 +147,7 @@ def change_card(account_id, token, endpoint, note):
         else:
             logger.error("card not updated: %s" % note['id'])
     except:
+        print(response.get_status_code())
         logger.exception("an unexpected error was encountered while updating note")
 
 
@@ -190,6 +191,7 @@ def delete_notes(account_id, token, endpoint, notes):
         for note in notes:
             response = findingsAPI.delete_note(
                 account_id=account_id, 
+                note_id=note['id'],
                 **note
             )
             if response.get_status_code() == 200:
@@ -241,6 +243,7 @@ def delete_occurrences(account_id, token, endpoint, occurrences):
         for occurrence in occurrences:
             response = findingsAPI.delete_occurrence(
                 account_id=account_id, 
+                occurrence_id=occurrence['id'],
                 **occurrence
             )
             if response.get_status_code() == 200:
