@@ -10,35 +10,29 @@ import string
 import random
 from kubeBenchResultsParser import fetchFailureList,fetchWarningList
 from kubeBenchL1Adaptor import postToSA
+from ibm_cloud_sdk_core.authenticators import BearerTokenAuthenticator, IAMAuthenticator
+from ibm_security_advisor_findings_api_sdk import FindingsApiV1
 
-
-# Change the context according to your service
+logger = logging.getLogger("adaptor")
+logger.setLevel(logging.INFO)
 
 def obtain_iam_token(api_key, token_url):
     if not api_key:
-        raise Exception("obtain_uaa_token: missing api key")
-
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
-    }
-
-    body = 'grant_type=urn%3Aibm%3Aparams%3Aoauth%3Agrant-type%3Aapikey&apikey=' + api_key + '&response_type=cloud_iam'
+        raise Exception("obtain_iam_token: missing api key")
     try:
-        response = requests.post(token_url, data=body, headers=headers)
-        response.raise_for_status()
+        authenticator = IAMAuthenticator(api_key, url=os.environ['TOKEN_URL'])
+        token = authenticator.token_manager.get_token()
     except requests.exceptions.HTTPError as err:
-        logger.exception("An unexpected error was encountered while obtaining IAM token" + str(err))
-        return None
-    if response.status_code == 200 and response.json()['access_token']:
-        return response.json()['access_token']
+        logger.exception("an unexpected error was encountered while obtaining IAM token: "+str(err))
+        sys.exit(1)
+    if token:
+        return token
 
 
 def adaptInsightsToOccurence(finding_type, provider_id,remediation, message, account_id, cluster_name):
     severity = "LOW"
     if (provider_id == "kubeBenchRedhatOpenshiftFailures"):
-        severity = "HIGH"
-    
+        severity = "HIGH"    
     initial = ""
     if(finding_type == "kubebenchredhat-openshift-failure"):
         initial = "Failure - "
@@ -68,7 +62,6 @@ def adaptInsightsToOccurence(finding_type, provider_id,remediation, message, acc
     return pay_json
 
 
-
 def id_generator(size=6, chars=string.digits):
     return ''.join(random.choice(chars) for x in range(size))
 
@@ -77,40 +70,20 @@ def id_generator(size=6, chars=string.digits):
 def fetchInsightsReportedByPartner(account_id, cluster_name):
     fileName = '/vul.txt'
     kubeBenchFailureVulnerabilities = fetchFailureList(fileName)
-    print(kubeBenchFailureVulnerabilities)
     kubebenchWarningVulnerabilities= fetchWarningList(fileName)
-
     vulnerabilityInsights = {"insights": []}
     finding_type = "kubebenchredhat-openshift-failure"
     for failure in kubeBenchFailureVulnerabilities:
-        print(failure)
-        kbenchFailure = adaptInsightsToOccurence(finding_type,
-                                                   "kubeBenchRedhatOpenshiftFailures",
-                                                   failure["remediation"],
-                                                   failure["issue"],
-                                                   account_id, cluster_name)
-
-
+        kbenchFailure = adaptInsightsToOccurence(finding_type, "kubeBenchRedhatOpenshiftFailures", failure["remediation"], failure["issue"], account_id, cluster_name)
         vulnerabilityInsights["insights"].append(kbenchFailure)
-
-
     finding_type = "kubebenchredhat-openshift-warning"
     for warning in kubebenchWarningVulnerabilities:
-
-        kbenchWarning = adaptInsightsToOccurence(finding_type,
-                                                   "kubeBenchRedhatOpenshiftWarnings",
-                                                   warning["remediation"],
-                                                   warning["issue"],
-                                                   account_id, cluster_name)
-
-
+        kbenchWarning = adaptInsightsToOccurence(finding_type, "kubeBenchRedhatOpenshiftWarnings", warning["remediation"], warning["issue"], account_id, cluster_name)
         vulnerabilityInsights["insights"].append(kbenchWarning)
-
     return vulnerabilityInsights
 
 
 def main(args):
-
     account_id = args[1]
     apikey = args[2]
     cluster_name =  args[3]
@@ -120,7 +93,6 @@ def main(args):
             "apikey": apikey,
             "account": account_id,
             "endpoint": endpoint})
-
 
 if __name__ == "__main__":
     main(sys.argv)

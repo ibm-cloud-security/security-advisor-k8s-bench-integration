@@ -2,16 +2,16 @@
 global:
 
   name: kubebench-sa-adapter-public
-  imageName: kubebench-sa-adapter
-  tag: "0.0.25"
-  imagePullSecrets: secadv-dev-secret
-  registryNamespace: secadv_dev
+  imageName: bench-int
+  tag: "latest"
+  #imagePullSecrets: secadv-dev-secret
+  registryNamespace: gary29198
   imagePullPolicy: IfNotPresent
   clusterNamespace: default
   cloudEnv: ibmcloud
 
-  saEndpoint: "https://us-south.secadvisor.cloud.ibm.com/findings/v1"
-  # saEndpoint: "https://eu-gb.secadvisor.cloud.ibm.com/findings/v1"
+  saEndpoint: "https://us-south.secadvisor.cloud.ibm.com/findings"
+  # saEndpoint: "https://eu-gb.secadvisor.cloud.ibm.com/findings"
 
   tokenUrl: "https://iam.cloud.ibm.com/identity/token"
   # token_url: "https://iam.test.cloud.ibm.com/identity/token"
