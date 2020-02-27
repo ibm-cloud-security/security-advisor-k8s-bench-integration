@@ -129,7 +129,6 @@ def create_note(account_id, token, endpoint):
             else:
                 logger.error("unable to create note: %s" % note['id'])
     except:
-        print(response.get_status_code())
         logger.exception("an unexpected error was encountered while creating note")
 
 

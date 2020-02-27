@@ -147,7 +147,6 @@ def change_card(account_id, token, endpoint, note):
         else:
             logger.error("card not updated: %s" % note['id'])
     except:
-        print(response.get_status_code())
         logger.exception("an unexpected error was encountered while updating note")
 
 
