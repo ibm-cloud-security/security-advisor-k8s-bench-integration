@@ -1,3 +1,5 @@
+# DEPRECATED
+
 # security-advisor-k8s-bench-integration
 
 ## Definition of terms:
