@@ -1,4 +1,5 @@
 # DEPRECATED
+The Security Insights feature is deprecated and will no longer be supported.
 
 # security-advisor-k8s-bench-integration
 
